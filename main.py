@@ -1,48 +1,146 @@
-# TODO: Crie a classe PlanoTelefone, seu método de inicialização e encapsule os atributos, 'nome' e 'saldo':
-class PlanoTelefone:
-  def __init__(self, nome, saldo):
-      self._nome=nome
-      self._saldo=saldo
+import os
+import sys
+import json
 
-# TODO: Crie um método 'verificar_saldo' para verificar o saldo do plano sem acessar diretamente o atributo:    
-  def verificar_saldo(self):
-    if self._saldo < 10:
-      return self.mensagem_personalizada("baixo")
-    elif self._saldo >= 50:
-      return self.mensagem_personalizada("alto")
+def menu():
+    carregar_tarefas()
+    while True:
+        print("1 = Adicionar Tarefa")
+        print("2 = Visualizar Tarefas")
+        print("3 = Sair")
+        print("4 = Remover Tarefa")
+        print("5 = Editar Tarefa")
+        print("6 = Marcar Tarefa como Concluída")
+        print("7 = Marcar Tarefa como Pendente")
+        print("8 = Buscar Tarefas")
+        print("9 = Definir Prioridade")
+        escolha = input("Escolha uma opção: ")
+        
+        if escolha == "1":
+            adicionar_tarefa()
+        elif escolha == "2":
+            visualizar_tarefas()
+        elif escolha == "3":
+            salvar_tarefas()
+            print("Saindo...")
+            break
+        elif escolha == "4":
+            remover_tarefa()
+        elif escolha == "5":
+            editar_tarefa()
+        elif escolha == "6":
+            marcar_como_concluida()
+        elif escolha == "7":
+            marcar_como_pendente()
+        elif escolha == "8":
+            buscar_tarefa()
+        elif escolha == "9":
+            definir_prioridade()
+        else:
+            print("Opção inválida, tente novamente.")
+
+tarefas = []
+
+def adicionar_tarefa():
+    tarefa = input("Digite a tarefa: ")
+    tarefas.append({"descricao": tarefa, "concluida": False})
+    print("Tarefa adicionada!")
+
+def visualizar_tarefas():
+    print("Tarefas:")
+    for i, tarefa in enumerate(tarefas):
+        status = "Concluída" if tarefa["concluida"] else "Pendente"
+        print(f"{i + 1}. {tarefa['descricao']} [{status}]")
+
+def remover_tarefa():
+    visualizar_tarefas()
+    try:
+        indice = int(input("Digite o número da tarefa que deseja remover: ")) - 1
+        if 0 <= indice < len(tarefas):
+            tarefa_removida = tarefas.pop(indice)
+            print(f"Tarefa '{tarefa_removida['descricao']}' removida com sucesso!")
+        else:
+            print("Índice inválido.")
+    except ValueError:
+        print("Entrada inválida. Insira um número válido.")
+
+def editar_tarefa():
+    visualizar_tarefas()
+    try:
+        indice = int(input("Insira o número da tarefa que deseja editar: ")) - 1
+        if 0 <= indice < len(tarefas):
+            nova_descricao = input("Digite a nova descrição: ")
+            tarefas[indice]["descricao"] = nova_descricao
+            print("Tarefa atualizada com sucesso!")
+        else:
+            print("Índice inválido.")
+    except ValueError:
+        print("Entrada inválida. Por favor, insira um número válido.")
+
+def salvar_tarefas():
+    with open('tarefas.json', 'w') as arquivo: 
+        json.dump(tarefas, arquivo)
+    print("Tarefas salvas com sucesso!")
+
+def carregar_tarefas():
+    global tarefas
+    if os.path.exists('tarefas.json'): 
+        with open('tarefas.json', 'r') as arquivo:
+            tarefas = json.load(arquivo)
+        print("Tarefas carregadas com sucesso!")
     else:
-      return self.mensagem_personalizada("razoável")
-    
-# TODO: Crie um método 'mensagem_personalizada' para gerar uma mensagem personalizada com base no saldo: 
-  def mensagem_personalizada (self, status):
-    if status =="baixo" :
-      return "Seu saldo está baixo. Recarregue e use os serviços do seu plano."
-    elif status == "alto" :
-      return "Parabéns! Continue aproveitando seu plano sem preocupações."
-    else:
-      return "Seu saldo está razoável. Aproveite o uso moderado do seu plano"
-# Classe UsuarioTelefone:
-class UsuarioTelefone:
-    def __init__(self, nome, plano):
-        self._nome = nome
-        self._plano = plano
+        tarefas = []
 
-# TODO: Crie um método para verificar o saldo do usuário e gerar uma mensagem personalizada:
-    def verificar_saldo(self):
-        saldo_mensagem = self._plano.verificar_saldo()
-        mensagem_personalizada = self._plano.mensagem_personalizada()
-        return saldo_mensagem, mensagem_personalizada
+def marcar_como_concluida():
+    visualizar_tarefas()
+    try:
+        indice = int(input("Digite o número da tarefa que deseja marcar como concluída: ")) - 1
+        if 0 <= indice < len(tarefas):
+            tarefas[indice]["concluida"] = True
+            print("Tarefa marcada como concluída!")
+        else:
+            print("Índice inválido.")
+    except ValueError:
+        print("Entrada inválida. Insira um número válido.")
 
+def marcar_como_pendente():
+    visualizar_tarefas()
+    try:
+        indice = int(input("Digite o número da tarefa que deseja marcar como pendente: ")) - 1
+        if 0 <= indice < len(tarefas):
+            tarefas[indice]["concluida"] = False
+            print("Tarefa marcada como pendente!")
+        else:
+            print("Índice inválido.")
+    except ValueError:
+        print("Entrada inválida. Insira um número válido.")
 
-# Recebendo as entradas do usuário (nome, plano, saldo):
-nome_usuario = input()
-nome_plano = input()
-saldo_inicial = float(input())
+def buscar_tarefa():
+    try:
+        palavra_chave = input("Digite a palavra-chave para buscar: ")
+        print("Tarefas encontradas:")
+        encontrou_tarefa = False
+        for i, tarefa in enumerate(tarefas):
+            if palavra_chave.lower() in tarefa["descricao"].lower():
+                status = "Concluída" if tarefa["concluida"] else "Pendente"
+                print(f"{i + 1}. {tarefa['descricao']} [{status}]")
+                encontrou_tarefa = True
+        if not encontrou_tarefa:
+            print("Nenhuma tarefa encontrada com a palavra-chave fornecida.")
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
 
- # Criação de objetos do plano de telefone e usuário de telefone com dados fornecidos:
-plano_usuario = PlanoTelefone(nome_plano, saldo_inicial) 
-usuario = UsuarioTelefone(nome_usuario, plano_usuario)  
+def definir_prioridade():
+    visualizar_tarefas()
+    try:
+        indice = int(input("Digite o número da tarefa para definir a prioridade: ")) - 1
+        if 0 <= indice < len(tarefas):
+            nova_prioridade = input("Defina a nova prioridade da tarefa (Alta, Média, Baixa): ").capitalize()
+            tarefas[indice]["prioridade"] = nova_prioridade
+            print("Prioridade atualizada!")
+        else:
+            print("Índice inválido.")
+    except ValueError:
+        print("Entrada inválida. Insira um número válido.")
 
-# Chamada do método para verificar_saldo sem acessar diretamente os atributos do plano:
-saldo_usuario, mensagem_usuario = usuario.verificar_saldo()  
-print(mensagem_usuario)
+menu()
