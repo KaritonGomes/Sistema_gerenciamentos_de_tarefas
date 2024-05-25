@@ -14,6 +14,6 @@ Este é um simples aplicativo de linha de comando para gerenciamento de tarefas,
 - **Definir Prioridade**: Permite definir a prioridade de uma tarefa como Alta, Média ou Baixa.
 - **Salvar e Carregar Tarefas**: As tarefas são salvas em um arquivo JSON para persistência e carregadas automaticamente ao iniciar o programa.
 
-##Requisitos
+#Requisitos
 - Python 3.x
 - Bibliotecas padrão do Python: os, sys, json
