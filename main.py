@@ -62,7 +62,6 @@ def visualizar_tarefas():
         status = "Concluída" if tarefa["concluida"] else "Pendente"
         print(f"{i + 1}. {tarefa['descricao']} [{status}] - Prioridade: {tarefa['prioridade']} - Data de Criação: {tarefa['data_criacao']} - Prazo: {tarefa['prazo']}")
 
-
 def remover_tarefa():
     visualizar_tarefas()
     try:
@@ -155,8 +154,8 @@ def definir_prioridade():
         print("Entrada inválida. Insira um número válido.")
 
 def ordenar_tarefas_por_prioridade():
-    prioridades = {"Alta": 1, "Media":2, "Baixa": 3}
-    tarefas.sort(key=lambda x : prioridades.get(x.get ("prioridade", "Baixar"),3))
-    print ("Tarefas Ordenadas por prioridade !")
+    prioridades = {"Alta": 1, "Média": 2, "Baixa": 3}
+    tarefas.sort(key=lambda x: prioridades.get(x.get("prioridade", "Baixa"), 3))
+    print("Tarefas ordenadas por prioridade!")
 
 menu()
