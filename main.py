@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+from datetime import datetime
 
 def menu():
     carregar_tarefas()
@@ -42,15 +43,25 @@ def menu():
 tarefas = []
 
 def adicionar_tarefa():
-    tarefa = input("Digite a tarefa: ")
-    tarefas.append({"descricao": tarefa, "concluida": False})
+    descricao = input("Digite a tarefa: ")
+    prioridade = input("Defina a prioridade da tarefa (Alta, Média, Baixa): ").capitalize()
+    prazo = input("Digite o prazo (DD/MM/AAAA): ")
+    data_criacao = datetime.now().strftime("%d/%m/%Y")
+    try:
+        data_prazo = datetime.strptime(prazo, "%d/%m/%Y").strftime("%d/%m/%Y")
+    except ValueError:
+        print("Formato de data inválido. Use DD/MM/AAAA.")
+        return
+    tarefas.append({"descricao": descricao, "concluida": False, "prioridade": prioridade, "data_criacao": data_criacao, "prazo": data_prazo})
     print("Tarefa adicionada!")
 
 def visualizar_tarefas():
+    ordenar_tarefas_por_prioridade()
     print("Tarefas:")
     for i, tarefa in enumerate(tarefas):
         status = "Concluída" if tarefa["concluida"] else "Pendente"
-        print(f"{i + 1}. {tarefa['descricao']} [{status}]")
+        print(f"{i + 1}. {tarefa['descricao']} [{status}] - Prioridade: {tarefa['prioridade']} - Data de Criação: {tarefa['data_criacao']} - Prazo: {tarefa['prazo']}")
+
 
 def remover_tarefa():
     visualizar_tarefas()
@@ -142,5 +153,10 @@ def definir_prioridade():
             print("Índice inválido.")
     except ValueError:
         print("Entrada inválida. Insira um número válido.")
+
+def ordenar_tarefas_por_prioridade():
+    prioridades = {"Alta": 1, "Media":2, "Baixa": 3}
+    tarefas.sort(key=lambda x : prioridades.get(x.get ("prioridade", "Baixar"),3))
+    print ("Tarefas Ordenadas por prioridade !")
 
 menu()
